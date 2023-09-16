@@ -7,16 +7,18 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  bloc: ^8.1.2
+  equatable: ^2.0.5
+  flame: ^1.8.1
+  flame_tiled: ^1.13.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.3
-  flutter_localizations:
-    sdk: flutter
-  intl: ^0.18.0
+  vector_math: ^2.1.4
 
 dev_dependencies:
+  assets_gen: ^1.5.0
   bloc_test: ^9.1.2
+  build_runner: ^2.4.6
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
   mocktail: ^0.3.0
@@ -25,3 +27,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/tiles/world.tmx
+    - assets/characters/Adventurer/Poses/
+    - assets/characters/Zombie/Poses/
+    - assets/dungeon/
+    - assets/town/
