@@ -7,13 +7,13 @@ import 'package:zombie_game/constants/assets.dart';
 import 'package:zombie_game/zombie_game/widgets/components.dart';
 
 class ZombieGame extends FlameGame with HasKeyboardHandlerComponents {
-  ZombieGame() : _world = ZombieWorld() {
-    cameraComponent = CameraComponent(world: _world);
+  ZombieGame() : world = ZombieWorld() {
+    cameraComponent = CameraComponent(world: world);
     images.prefix = '';
   }
 
   late final CameraComponent cameraComponent;
-  final ZombieWorld _world;
+  final ZombieWorld world;
 
   @override
   FutureOr<void> onLoad() async {
@@ -23,11 +23,7 @@ class ZombieGame extends FlameGame with HasKeyboardHandlerComponents {
       Assets.assets_town_tile_0000_png,
     ]);
 
-    cameraComponent.viewfinder.anchor = Anchor.center;
-
-    await addAll([cameraComponent, _world]);
-
-    cameraComponent.follow(_world.player);
+    await addAll([cameraComponent, world]);
 
     return super.onLoad();
   }
