@@ -20,10 +20,14 @@ class ZombieGame extends FlameGame with HasKeyboardHandlerComponents {
     //ImageCache
     await images.loadAll([
       Assets.assets_characters_Adventurer_Poses_adventurer_action1_png,
+      Assets.assets_characters_Zombie_Poses_zombie_cheer1_png,
       Assets.assets_town_tile_0000_png,
     ]);
 
     await addAll([cameraComponent, world]);
+
+    // TODO(dev): disable debug mode here
+    debugMode = true;
 
     return super.onLoad();
   }
