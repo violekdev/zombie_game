@@ -5,10 +5,10 @@ import 'package:flame/experimental.dart';
 import 'package:flutter/services.dart';
 import 'package:zombie_game/constants/assets.dart';
 import 'package:zombie_game/constants/constants.dart';
-import 'package:zombie_game/zombie_game/widgets/unwalkable_component.dart';
+import 'package:zombie_game/zombie_game/widgets/utilities/utilities.dart';
 import 'package:zombie_game/zombie_game/zombie_game.dart';
 
-class Player extends SpriteComponent with KeyboardHandler, HasGameReference<ZombieGame> {
+class Player extends SpriteComponent with KeyboardHandler, HasGameReference<ZombieGame>, UnwalkableTerrainChecker {
   Player()
       : super(
           position: Vector2(GameSizeConstants.worldTileSzie * 9.6, GameSizeConstants.worldTileSzie * 2.5),
@@ -33,60 +33,15 @@ class Player extends SpriteComponent with KeyboardHandler, HasGameReference<Zomb
   @override
   void update(double dt) {
     // Save this to use after we zero out movement for unwalkable terrain
-    final originalposition = position.clone();
+    final originalPosition = position.clone();
 
     final movementThisFrame = movement * speed * dt;
 
     // Fake update the positio so our anchot calculations take into account what we want to do this turn.
     position.add(movementThisFrame);
 
-    if (movement.y < 0) {
-      // Moving up
-      final newTop = positionOfAnchor(Anchor.topCenter);
+    checkMovement(movementThisFrame: movementThisFrame, originalPosition: originalPosition);
 
-      for (final component in game.world.componentsAtPoint(newTop)) {
-        if (component is UnwalkableComponent) {
-          movementThisFrame.y = 0;
-          break;
-        }
-      }
-    }
-    if (movement.y > 0) {
-      // Moving down
-      final newBottom = positionOfAnchor(Anchor.bottomCenter);
-
-      for (final component in game.world.componentsAtPoint(newBottom)) {
-        if (component is UnwalkableComponent) {
-          movementThisFrame.y = 0;
-          break;
-        }
-      }
-    }
-    if (movement.x < 0) {
-      // Moving left
-      final newLeft = positionOfAnchor(Anchor.centerLeft);
-
-      for (final component in game.world.componentsAtPoint(newLeft)) {
-        if (component is UnwalkableComponent) {
-          movementThisFrame.x = 0;
-          break;
-        }
-      }
-    }
-    if (movement.x > 0) {
-      // Moving right
-      final newRight = positionOfAnchor(Anchor.centerRight);
-
-      for (final component in game.world.componentsAtPoint(newRight)) {
-        if (component is UnwalkableComponent) {
-          movementThisFrame.x = 0;
-          break;
-        }
-      }
-    }
-
-    position = originalposition + movementThisFrame;
-    position.clamp(halfSize, maxPosition);
     super.update(dt);
   }
 

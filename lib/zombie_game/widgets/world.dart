@@ -5,6 +5,7 @@ import 'package:flame/experimental.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:zombie_game/constants/constants.dart';
 import 'package:zombie_game/zombie_game/widgets/components.dart';
+import 'package:zombie_game/zombie_game/widgets/utilities/utilities.dart';
 import 'package:zombie_game/zombie_game/zombie_game.dart';
 
 class ZombieWorld extends World with HasGameRef<ZombieGame> {
@@ -43,13 +44,17 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
 
         // If there is a last point, or this is the end of the list, we have a line to add to our cached list of lines
         if (lastPoint != null) {
-          unwalkableComponentEdges.add(Line(start: lastPoint, end: nextPoint));
+          unwalkableComponentEdges.add(Line(lastPoint, nextPoint));
         }
 
         lastPoint = nextPoint;
       }
-      unwalkableComponentEdges.add(Line(start: lastPoint!, end: firstPoint!));
+      unwalkableComponentEdges.add(Line(lastPoint!, firstPoint!));
       add(UnwalkableComponent(vertices));
+    }
+
+    for (final line in unwalkableComponentEdges) {
+      add(LineComponent.red(line: line, thickness: 3));
     }
 
     zombie = Zombie(
@@ -80,21 +85,5 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
         size.y - gameSize.y / 2,
       ),
     );
-  }
-}
-
-class Line {
-  Line({
-    required this.start,
-    required this.end,
-  });
-
-  final Vector2 start;
-  final Vector2 end;
-
-  List<double> asList() => [start.x, start.y, end.x, end.y];
-
-  double get slope {
-    return end.y - start.y / end.x - start.x;
   }
 }
