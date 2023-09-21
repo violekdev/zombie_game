@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:zombie_game/constants/constants.dart';
 import 'package:zombie_game/zombie_game/widgets/components.dart';
+import 'package:zombie_game/zombie_game/widgets/utilities/utilities.dart';
 import 'package:zombie_game/zombie_game/zombie_game.dart';
 
 class ZombieWorld extends World with HasGameRef<ZombieGame> {
@@ -16,13 +18,13 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
   late final Zombie zombie;
 
   late Vector2 size = Vector2(
-    map.tileMap.map.width.toDouble() * GameSizeConstants.worldTileSzie,
-    map.tileMap.map.height.toDouble() * GameSizeConstants.worldTileSzie,
+    map.tileMap.map.width.toDouble() * GameSizeConstants.worldTileSize,
+    map.tileMap.map.height.toDouble() * GameSizeConstants.worldTileSize,
   );
 
   @override
   FutureOr<void> onLoad() async {
-    map = await TiledComponent.load('world.tmx', Vector2.all(GameSizeConstants.worldTileSzie));
+    map = await TiledComponent.load('world.tmx', Vector2.all(GameSizeConstants.worldTileSize));
 
     final objectLayer = map.tileMap.getLayer<ObjectGroup>('Objects')!;
     for (final object in objectLayer.objects) {
@@ -43,22 +45,38 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
 
         // If there is a last point, or this is the end of the list, we have a line to add to our cached list of lines
         if (lastPoint != null) {
-          unwalkableComponentEdges.add(Line(start: lastPoint, end: nextPoint));
+          unwalkableComponentEdges.add(Line(lastPoint, nextPoint));
         }
 
         lastPoint = nextPoint;
       }
-      unwalkableComponentEdges.add(Line(start: lastPoint!, end: firstPoint!));
+      unwalkableComponentEdges.add(Line(lastPoint!, firstPoint!));
       add(UnwalkableComponent(vertices));
     }
 
+    for (final line in unwalkableComponentEdges) {
+      add(LineComponent.red(line: line));
+    }
+
     zombie = Zombie(
-      position: Vector2(GameSizeConstants.worldTileSzie * 14.6, GameSizeConstants.worldTileSzie * 6.5),
+      position: Vector2(GameSizeConstants.worldTileSize * 14.6, GameSizeConstants.worldTileSize * 6.5),
     );
 
     player = Player();
 
     await addAll([map, player, zombie]);
+
+    const zombiesToAdd = 15;
+    var counter = 0;
+
+    while (counter < zombiesToAdd) {
+      final x = Random().nextInt(20) + 1;
+      final y = Random().nextInt(20) + 1;
+      add(
+        Zombie(position: Vector2(GameSizeConstants.worldTileSize * x, GameSizeConstants.worldTileSize * y)),
+      );
+      counter++;
+    }
 
     gameRef.cameraComponent.follow(player);
 
@@ -80,21 +98,5 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
         size.y - gameSize.y / 2,
       ),
     );
-  }
-}
-
-class Line {
-  Line({
-    required this.start,
-    required this.end,
-  });
-
-  final Vector2 start;
-  final Vector2 end;
-
-  List<double> asList() => [start.x, start.y, end.x, end.y];
-
-  double get slope {
-    return end.y - start.y / end.x - start.x;
   }
 }
