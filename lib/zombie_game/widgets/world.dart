@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -17,13 +18,13 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
   late final Zombie zombie;
 
   late Vector2 size = Vector2(
-    map.tileMap.map.width.toDouble() * GameSizeConstants.worldTileSzie,
-    map.tileMap.map.height.toDouble() * GameSizeConstants.worldTileSzie,
+    map.tileMap.map.width.toDouble() * GameSizeConstants.worldTileSize,
+    map.tileMap.map.height.toDouble() * GameSizeConstants.worldTileSize,
   );
 
   @override
   FutureOr<void> onLoad() async {
-    map = await TiledComponent.load('world.tmx', Vector2.all(GameSizeConstants.worldTileSzie));
+    map = await TiledComponent.load('world.tmx', Vector2.all(GameSizeConstants.worldTileSize));
 
     final objectLayer = map.tileMap.getLayer<ObjectGroup>('Objects')!;
     for (final object in objectLayer.objects) {
@@ -54,16 +55,28 @@ class ZombieWorld extends World with HasGameRef<ZombieGame> {
     }
 
     for (final line in unwalkableComponentEdges) {
-      add(LineComponent.red(line: line, thickness: 3));
+      add(LineComponent.red(line: line));
     }
 
     zombie = Zombie(
-      position: Vector2(GameSizeConstants.worldTileSzie * 14.6, GameSizeConstants.worldTileSzie * 6.5),
+      position: Vector2(GameSizeConstants.worldTileSize * 14.6, GameSizeConstants.worldTileSize * 6.5),
     );
 
     player = Player();
 
     await addAll([map, player, zombie]);
+
+    const zombiesToAdd = 15;
+    var counter = 0;
+
+    while (counter < zombiesToAdd) {
+      final x = Random().nextInt(20) + 1;
+      final y = Random().nextInt(20) + 1;
+      add(
+        Zombie(position: Vector2(GameSizeConstants.worldTileSize * x, GameSizeConstants.worldTileSize * y)),
+      );
+      counter++;
+    }
 
     gameRef.cameraComponent.follow(player);
 

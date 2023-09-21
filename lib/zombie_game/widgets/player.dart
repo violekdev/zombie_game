@@ -11,7 +11,7 @@ import 'package:zombie_game/zombie_game/zombie_game.dart';
 class Player extends SpriteComponent with KeyboardHandler, HasGameReference<ZombieGame>, UnwalkableTerrainChecker {
   Player()
       : super(
-          position: Vector2(GameSizeConstants.worldTileSzie * 9.6, GameSizeConstants.worldTileSzie * 2.5),
+          position: Vector2(GameSizeConstants.worldTileSize * 9.6, GameSizeConstants.worldTileSize * 2.5),
           size: Vector2.all(64),
           anchor: Anchor.center,
           priority: 1,
@@ -22,7 +22,7 @@ class Player extends SpriteComponent with KeyboardHandler, HasGameReference<Zomb
   late Vector2 halfSize;
   late Vector2 maxPosition = game.world.size - halfSize;
   Vector2 movement = Vector2.zero();
-  double speed = GameSizeConstants.worldTileSzie * 4; // TODO(dev): change speed here when needed
+  double speed = GameSizeConstants.worldTileSize * 4; // TODO(dev): change speed here when needed
 
   @override
   FutureOr<void> onLoad() {
